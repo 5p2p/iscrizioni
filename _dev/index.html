@@ -1,0 +1,31 @@
+---
+layout: default
+---
+{% raw  %}
+
+<input
+    v-model="newTodoText"
+    v-on:keyup.enter="addNewTodo"
+    placeholder="Add a todo"
+>
+
+
+<ul id="events-list-example">
+
+  <li v-for="todo in todos">
+    {{ todo }}
+  </li>
+</ul>
+
+<div id="cazm">
+  <input v-model="caz" placeholder="edit me">
+  <p>Message is: {{ caz }}</p>
+</div>
+
+
+<div id="app-6">
+  <p>{{ message }}</p>
+  <input v-model="message">
+</div>
+
+{% endraw  %}

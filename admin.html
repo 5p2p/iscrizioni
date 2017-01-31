@@ -1,0 +1,22 @@
+---
+layout: app-input
+app: app.js
+---
+
+<!-- Admin panel -->
+
+{% raw %}
+
+  <div id="app">
+
+    <ul>
+       <li v-for="buddy in people">
+         {{buddy.name}}
+         <input :value="buddy.notes" @input="updateBuddy(buddy, $event.target.value)" placeholder="Note">
+
+       </li>
+     </ul>
+
+   </div>
+
+{% endraw %}

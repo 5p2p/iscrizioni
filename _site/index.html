@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Vue -->
+  <!-- <script src="https://cdn.jsdelivr.net/vue/latest/vue.js"></script> -->
+  <!-- Firebase -->
+  <!-- <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script> -->
+  <!-- VueFire -->
+  <!-- <script src="https://cdn.jsdelivr.net/vuefire/1.0.0/vuefire.min.js"></script> -->
+
+
+  <script type="text/javascript" src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+  <script type="text/javascript" src="https://unpkg.com/vuefire"></script>
+
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="/assets/css/style.css">
+
+</head>
+
+
+  <body class="dark login">
+
+
+<main>
+  <article>
+
+      <header class="login">
+    <img class='login logo' src='/assets/images/logo.png'>
+    <p class="center text big"><strong>5PANI2PESCI</strong></p>
+    <p class="center text">L'amore chiama, l'amore è urgente!</p>
+    <p class="center text">17-19 Marzo 2017</p>
+  </header>
+
+  <div id="alertForm" class="alert box hide">
+    <strong>Attenzione!</strong> Devi compilare tutti i campi obbligatori
+  </div>
+
+  <div id="alertUnique" class="secondary alert box hide">
+    <strong>Attenzione!</strong> Questa persona risulta essere già iscritta
+  </div>
+
+  <div id="thankYou" class="hide">
+    <div class="positive confirmation box">
+      <div class="bigger">Grazie!</div>
+      <div>Abbiamo ricevuto la tua iscrizione.</div>
+    </div>
+    <p class="small center light" ><a href="http://5p2p.it">Torna a 5p2p.it</a></p>
+  </div>
+
+  
+  <div id="app">
+
+    <div id="inputBox" v-bind:class="{ 'hide': inputBoxHidden }">
+      <input v-model.trim="nBuddy.name" placeholder="Nome e Cognome*" required>
+      <input v-model.trim="nBuddy.email" placeholder="Email*">
+      <input v-model.trim="nBuddy.mobile" placeholder="Cellulare*">
+      <input v-model.trim="nBuddy.age" placeholder="Età*">
+      <input v-model.trim="nBuddy.city" placeholder="Città*">
+      <input v-model.trim="nBuddy.food" placeholder="Hai intolleranze alimentari?">
+
+      <!-- <button @click="addBuddy" class="action btn full-width">Iscriviti</button> -->
+      <button @click="addBuddy" class="action btn full-width">Iscriviti</button>
+      <p class="footnote">I campi segnati con * sono obbligatori</p>
+    </div>
+
+  </div>
+
+  
+
+
+  </article>
+</main>
+
+</body>
+
+
+<script src="app.js"></script>
+
+<!--
+<script src="app.js"></script>
+-->
