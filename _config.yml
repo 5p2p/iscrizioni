@@ -1,4 +1,4 @@
-baseurl: ""
+baseurl: "/"
 assets:
   css: "/assets/css"
 
