@@ -12,7 +12,7 @@ theme: dark
   </header>
 
   <div id="alertForm" class="alert box hide">
-    <strong>Attenzione!</strong> Devi compilare tutti i campi obbligatori
+    <strong>Attenzione!</strong> Devi compilare tutti i campi obbligatori ed immettere una email valida
   </div>
 
   <div id="alertUnique" class="secondary alert box hide">
@@ -22,24 +22,29 @@ theme: dark
   <div id="thankYou" class="hide">
     <div class="positive confirmation box">
       <div class="bigger">Grazie!</div>
-      <div>Abbiamo ricevuto la tua iscrizione.</div>
+      <div>Abbiamo ricevuto la tua iscrizione</div>
     </div>
-    <p class="small center light" ><a href="http://5p2p.it">Torna a 5p2p.it</a></p>
+    <p class="small center light" >
+      <a href="http://5p2p.it">Torna a 5p2p.it</a>
+      <!-- <input type="button" value="iscrivi una nuova persona" onClick="window.location.reload()"> -->
+      <!-- <button onClick="window.location.reload()">iscrivi una nuova persona</button> -->
+    </p>
   </div>
 
   {% raw %}
   <div id="app">
 
-    <div id="inputBox" v-bind:class="{ 'hide': inputBoxHidden }">
-      <input v-model.trim="nBuddy.name" placeholder="Nome e Cognome*" required>
-      <input v-model.trim="nBuddy.email" placeholder="Email*">
-      <input v-model.trim="nBuddy.mobile" placeholder="Cellulare*">
-      <input v-model.trim="nBuddy.age" placeholder="Età*">
-      <input v-model.trim="nBuddy.city" placeholder="Città*">
-      <input v-model.trim="nBuddy.food" placeholder="Hai intolleranze alimentari?">
+    <div id="inputBox" v-bind:class="{ 'hide': inputHide }">
+      <input v-model.trim="user.name" placeholder="Nome e Cognome*" required>
+      <input v-model.trim="user.email" placeholder="Email*">
+      <input v-model.trim="user.mobile" placeholder="Cellulare*">
+      <input v-model.trim="user.age" placeholder="Età*">
+      <input v-model.trim="user.city" placeholder="Città*">
+      <input v-model.trim="user.intolerance" placeholder="Hai intolleranze alimentari?">
 
       <!-- <button @click="addBuddy" class="action btn full-width">Iscriviti</button> -->
-      <button @click="addBuddy" class="action btn full-width">Iscriviti</button>
+      <!-- <button @click="addBuddy" class="action btn full-width">Iscriviti</button> -->
+      <button @click="addUser" class="action btn full-width">Iscriviti</button>
       <p class="footnote">I campi segnati con * sono obbligatori</p>
     </div>
 

@@ -1,3 +1,7 @@
+
+// ---EVENT variable--------------------------------------------------------
+const myEvent = '2017-02-sorrento'
+
 // Email RegExp
 var emailRE = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
@@ -6,161 +10,164 @@ const alertForm = document.getElementById('alertForm')
 const inputBox = document.getElementById('inputBox')
 const thankYou = document.getElementById('thankYou')
 
-const confirmationEmail = '<h1>Grazie!</h1>'+
-'<p>Abbiamo correttamente ricevuto la tua iscrizione, ti aspettiamo il 17 Marzo.</p>'+
-'<p>Ti ricordiamo che <strong>nel caso tu non possa più partecipare</strong> di comunicare'+
-'tempestivamente la tua assenza. Questo ci permette di dare ad un\'altra persona la possibilità'+
-'di partecipare e di gestire in maniera migliore l\'organizzazione del corso.</p>'+
-'<p>A presto!</p>'+
-'<p>Lo staff di 5pani2pesci</p>'
-
+// --FIREBASE---------------------------------------------------------------
+// var firebase = require("firebase")
 var db = firebase.initializeApp({
   databaseURL: 'https://app-5pani2pesci.firebaseio.com'
 }).database()
-var peopleEventRef = db.ref('events/sorrento-1719-marzo-2017')
-var emailRef = db.ref('events/emails/sending')
+
+// --FIREBASE REFERENCES----------------------------------------------------
+// event users firebase ref
+const eventPath = 'events/' // events
+const thisEvent = myEvent+'/'
+var userRef = db.ref(eventPath+thisEvent+'users/')
+// email firebase ref
+var emailRef = db.ref('email/draft/')
+// unique firebase ref
+var uniqRef = db.ref(eventPath+thisEvent+'uniqueness/')
 
 
-function sendEmail(email){
-  // push to Firebase
-  console.log('> Queing Email to Firebase')
-  emailRef.push(email)
-  // reset form
-  // callback(buddy)
+// --FUNCTIONS--------------------------------------------------------------
+function formatToday() {
+  today = new Date()
+  year = today.getFullYear()
+  mo = today.getMonth()+1
+  month = ('0'+mo).slice(-2)
+  day = ('0' + today.getDate()).slice(-2)
+  return day+'/'+month+'/'+year
 }
+var today = formatToday()
 
-function pushFirebase(buddy,callback){
-  // push to Firebase
-  console.log('> Pushing to Firebase')
-  peopleEventRef.push(buddy)
-  // reset form
-  callback(buddy)
-}
-
-function uniqueEmail (buddy, callback, callback2) {
-  var email = buddy.email
-  peopleEventRef.orderByChild("email").equalTo(email).once("value", function(snapshot) {
-    var unique = !(snapshot.val() !== null)
-    console.log('unique email? '+unique)
-    if (unique) {
-      console.log ('> email is GOOD')
-      alertUnique.classList.add('hide')
-      callback(buddy,callback2)
-    }
-    else {
-      console.log ('> email already TAKEN :(')
-      alertUnique.classList.remove('hide')
-    }
+function uniqueNess (aRef, aUser, uniqueKey) {
+  return new Promise( function(respond,reject){
+    aRef.orderByChild(uniqueKey).equalTo(aUser[uniqueKey]).once("value", function (snapshot){
+      var unique = !(snapshot.val() !== null)
+      if (unique) {
+        aRef.push({name: aUser[uniqueKey]})
+        .catch(function () {
+          reject()
+          console.log('ERR Uniqness push failed')
+        })
+        .then(function(){
+          respond()
+          // console.log('> Uniqness push')
+        })
+      }
+      else {
+        reject()
+        // console.log('ERR Key is not unique')
+      }
+    })
+    .catch(function () {
+      reject()
+      // console.log('ERR Uniqness check failed')
+    })
   })
 }
 
-function uniqueNess (buddy, uniqueKey, callback, callback2) {
-  var buddyTest = buddy[uniqueKey]
-  peopleEventRef.orderByChild(uniqueKey).equalTo(buddyTest).once("value", function(snapshot) {
-    var unique = !(snapshot.val() !== null)
-    console.log('unique key? '+unique)
-    if (unique) {
-      console.log ('> key value is GOOD')
-      alertUnique.classList.add('hide')
-      callback(buddy,callback2)
-    }
-    else {
-      console.log ('> key value already TAKEN :(')
-      alertUnique.classList.remove('hide')
-    }
+function userPush(newUser, userRef) {
+  return new Promise (function (respond, reject) {
+    userRef.push(newUser)
+    .then(function () {
+      respond()
+      // console.log('> User pushed')
+    })
+    .catch(function () {
+      reject()
+      // console.log('ERR Wooow that failed')
+    })
   })
 }
 
-function resetForm (buddy) {
-  console.log('> Reset form fields')
-  // console.log('this is the value of inputBoxHidden:'+vm.$data.inputBoxHidden)
-  for (var key in buddy) buddy[key]=''
-  thankYou.classList.remove('hide')
-  vm.$data.inputBoxHidden = true
+function emailPush(newUser, emailRef) {
+  return new Promise (function (respond, reject) {
+    emailRef.push({
+      name: newUser.name,
+      email: newUser.email,
+      type: 'registration',
+      status: 'draft',
+      event: myEvent
+    })
+    .then(function () {
+      respond()
+    })
+    .catch(function () {
+      reject()
+    })
+  })
 }
 
-function postPushStuff () {
-  console.log('> Show Thank You message')
-  thankYou.classList.remove('hide')
-  vm.$data.inputBoxHidden = true
 
-  console.log ('> Queue Confirmation Email')
-  var emailObj = vm.$data.emailObj
-  var email = vm.$data.nBuddy.email
-  emailObj.to = email
-  emailRef.push(emailObj)
-}
-
+// --VUEJS------------------------------------------------------------------
 var vm = new Vue({
   el: "#app",
   data: {
-    inputBoxHidden: false,
-    emailObj: {
-      from: 'iscrizioni@5p2p.it',
-      to: '',
-      subject: 'Conferma iscrizione Sorrento 17-19 Marzo',
-      body: confirmationEmail
-    },
-    nBuddy: {
+    inputHide: false,
+    user: {
       name: '',
       email: '',
       mobile: '',
       age: '',
       city: '',
-      food: '',
+      intolerance: '',
       notes: '',
-      role: 'user',  // user roles: user, member, staff
-      status: 'active', // user status: active, canceled
-      registrationEmail: false, //Send a confirmation email upon registration (not email validation)
-      registrationDate: '', //Date of registration
+      role: 'user',  // user roles: user, member, staff, canceled
+      notifications: [], // array of sent email notifications
+      date: today, //Date of registration
     }
   },
   computed: {
     validation: function () {
       return {
-        name: !!this.nBuddy.name.trim(), // !! make the variable boolean
-        email: emailRE.test(this.nBuddy.email), // RegExp test for email
-        // mobile: !!this.nBuddy.mobile.trim(),
-        // age: !!this.nBuddy.age.trim(),
-        // city: !!this.nBuddy.city.trim(),
-        // food: !!this.nBuddy.food.trim(),
+        name: !!this.user.name.trim(), // !! make the variable boolean
+        email: emailRE.test(this.user.email), // RegExp test for email
+        mobile: !!this.user.mobile.trim(),
+        age: !!this.user.age.trim(),
+        city: !!this.user.city.trim(),
+        // intolerance: !!this.user.intolerance.trim(),
       }
     },
     isValid: function () {
       var validation = this.validation
-      console.log(validation)
       return Object.keys(validation).every(function (key) {
         // every checks if all elements pass the test implemented in the callback function
-        console.log('key> '+key+' ===> '+validation[key])
         return validation[key]
       })
     },
   },
   methods: {
-    addBuddy: function(){
+    updateUser: function(nBuddy, newText) {
+      peopleEventRef.child(nBuddy['.key']).child('notes').set(newText)
+    },
+    addUser: function () {
       if (this.isValid) {
-        console.log ('>> Form is valid')
         alertForm.classList.add('hide')
-        // uniqueEmail(this.nBuddy,
-        uniqueNess(this.nBuddy, "name",
-          pushFirebase,
-          postPushStuff
-          // resetForm
-        )
+        uniqueNess(uniqRef,this.user,"name")
+        .then(function () {
+          alertUnique.classList.add('hide')
+          userPush(vm.$data.user,userRef)
+          .then(function (){
+            thankYou.classList.remove('hide')
+            vm.$data.inputHide = true
+            emailPush(vm.$data.user,emailRef)
+            .catch(function () {
+              console.error('ERR No email push');
+            })
+          })
+          .catch(function () {
+            console.error('ERR No user push')
+          })
+        })
+        .catch(function () {
+          console.error('ERR User is not unique')
+          alertUnique.classList.remove('hide')
+        })
       }
-      else {
-        console.log('>> Something is missing in your form')
+      else{
         alertForm.classList.remove('hide')
         // TODO achieve same behavior putting all alerts in a vuejs object and then v-for like:
         // TODO see https://jsfiddle.net/chrisvfritz/pyLbpzzx
       }
-    },
-    updateBuddy: function(nBuddy, newText) {
-      peopleEventRef.child(nBuddy['.key']).child('notes').set(newText)
     }
-  },
-  // firebase: {
-  //   // can bind to either a direct Firebase reference or a query
-  //   people: peopleEventRef
-  // }
+  }
 })
