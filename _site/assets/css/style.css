@@ -523,3 +523,6 @@ input {
 
 .light, .light a {
   color: #D1D5D8; }
+
+body {
+  padding-bottom: 4rem; }

@@ -19,3 +19,7 @@ $desktop: 1024px;
 @import "typography";
 @import "layout";
 @import "form";
+
+body {
+  padding-bottom: 4rem;
+}
