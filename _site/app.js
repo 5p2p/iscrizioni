@@ -101,7 +101,15 @@ function emailPush(newUser, emailRef) {
 // --VUEJS------------------------------------------------------------------
 var vm = new Vue({
   el: "#app",
+  firebase: {
+    users: userRef
+  },
   data: {
+    todos : [
+      {name: 'uno'},
+      {name: 'due'},
+      {name: 'tre'},
+    ],
     inputHide: false,
     user: {
       name: '',

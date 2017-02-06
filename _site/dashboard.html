@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Javascript frameworks -->
-  <script type="text/javascript" src="https://unpkg.com/vue/dist/vue.js"></script>
-  <script type="text/javascript" src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
-
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+  <script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
 
   <!-- Stylesheet -->
   <link rel="stylesheet" href="http://localhost:4000/assets/css/style.css">
@@ -26,17 +26,13 @@
 
 
 
-  <div id="app">
-
-    <ul>
-       <li v-for="buddy in people">
-         {{buddy.name}}
-         <input :value="buddy.notes" @input="updateBuddy(buddy, $event.target.value)" placeholder="Note">
-
-       </li>
-     </ul>
-
-   </div>
+<div id="app">
+  <ol>
+    <li v-for="todo in todos">
+      {{ todo.text }}
+    </li>
+  </ol>
+</div>
 
 
 
@@ -46,7 +42,7 @@
 
 </body>
 
-<script src="http://localhost:4000app.js"></script>
+<script src="http://localhost:4000/delme.js"></script>
 
 </html>
 
