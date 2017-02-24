@@ -5,10 +5,10 @@ const myEvent = '2017-02-sorrento'
 // Email RegExp
 var emailRE = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
-const alertUnique = document.getElementById('alertUnique')
-const alertForm = document.getElementById('alertForm')
-const inputBox = document.getElementById('inputBox')
-const thankYou = document.getElementById('thankYou')
+var alertUnique = document.getElementById('alertUnique')
+var alertForm = document.getElementById('alertForm')
+var inputBox = document.getElementById('inputBox')
+var thankYou = document.getElementById('thankYou')
 
 // --FIREBASE---------------------------------------------------------------
 // var firebase = require("firebase")
