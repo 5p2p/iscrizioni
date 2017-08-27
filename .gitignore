@@ -1,4 +1,5 @@
 node_modules/
 old
 desktop.ini
+.DS_Store
 .sass-cache
